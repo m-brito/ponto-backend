@@ -84,6 +84,6 @@ public class GrupoHorario {
 
 	@Override
 	public String toString() {
-		return "GrupoHorario [id=" + id + ", usuario=" + usuario + ", nome=" + nome + ", horarios=" + horarios + "]";
+		return "GrupoHorario [id=" + id + ", usuario=" + usuario + ", nome=" + nome + "]";
 	}
 }

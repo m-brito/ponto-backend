@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,10 +23,24 @@ public class HorarioController {
 	@Autowired
 	HorarioService horarioService;
 	
-	@PatchMapping("/grupohorario/{idGrupoHorario}")
-	public ResponseEntity<Horario> editarHorario(@PathVariable Integer idGrupoHorario, @RequestBody Horario horario) throws ResourceNotFoundException {
+	@PostMapping("/grupohorario/{idGrupoHorario}")
+	ResponseEntity<Horario> novoHorario(@RequestBody Horario horario, @PathVariable Integer idGrupoHorario) throws ResourceNotFoundException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long userId = (Long) authentication.getPrincipal();
+        return horarioService.salvar(horario, userId.intValue(), idGrupoHorario);
+	}
+	
+	@DeleteMapping("/{id}")
+	ResponseEntity<Horario> deletarHorario(@PathVariable Integer id) throws ResourceNotFoundException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Long userId = (Long) authentication.getPrincipal();
+		return horarioService.deletar(id, userId.intValue());
+	}
+	
+	@PatchMapping("/{id}")
+	public ResponseEntity<Horario> editarHorario(@PathVariable Integer id,  @RequestBody Horario horario) throws ResourceNotFoundException {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-		return horarioService.editarHorario(horario, userId.intValue(), idGrupoHorario);
+		return horarioService.editarHorario(horario, userId.intValue(), id);
 	}
 }

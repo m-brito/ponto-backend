@@ -35,6 +35,7 @@ public class Ponto {
 	private GrupoHorario grupoHorario;
 
 	public Ponto() {
+		
 	}
 	
 	public Ponto(int id, LocalTime hora, LocalDate data, Usuario usuario, GrupoHorario grupoHorario) {

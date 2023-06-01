@@ -25,10 +25,12 @@ public class HorarioService {
 	@Autowired
 	GrupoHorarioRepository grupoHorarioRepository;
 	
-	public ResponseEntity<Horario> salvar(Horario horario, Integer idUsuario) throws ResourceNotFoundException {
-		GrupoHorario grupoHorario = grupoHorarioRepository.findById(horario.getGrupoHorario().getId())
+	public ResponseEntity<Horario> salvar(Horario horario, Integer idUsuario, Integer idGrupoHorario) throws ResourceNotFoundException {
+		System.out.println(idGrupoHorario);
+		GrupoHorario grupoHorario = grupoHorarioRepository.findById(idGrupoHorario)
 				.orElseThrow(() -> new ResourceNotFoundException("GrupoHorario", "Id", horario.getGrupoHorario().getId().toString()));
-		if(grupoHorario.getId() != idUsuario) {
+		horario.setGrupoHorario(grupoHorario);
+		if(grupoHorario.getUsuario().getId() != idUsuario) {
 			throw new PermissionDeniedException();
 		} else {
 			horarioRepository.save(horario);
@@ -41,7 +43,7 @@ public class HorarioService {
 				.orElseThrow(() -> new ResourceNotFoundException("Horario", "Id", id.toString()));
 		GrupoHorario grupoHorario = grupoHorarioRepository.findById(horario.getGrupoHorario().getId())
 				.orElseThrow(() -> new ResourceNotFoundException("GrupoHorario", "Id", horario.getGrupoHorario().getId().toString()));
-		if(grupoHorario.getId() != idUsuario) {
+		if(grupoHorario.getUsuario().getId() != idUsuario) {
 			throw new PermissionDeniedException();
 		} else {
 			horarioRepository.delete(horario);
@@ -49,18 +51,18 @@ public class HorarioService {
 		}
 	}
 	
-	public ResponseEntity<Horario> editarHorario(Horario novoHorario, Integer idUsuario, Integer idGrupoHorario) throws ResourceNotFoundException {
-		GrupoHorario grupoHorario = grupoHorarioRepository.findById(idGrupoHorario)
-				.orElseThrow(() -> new ResourceNotFoundException("GrupoHorario", "Id", idGrupoHorario.toString()));
-		Horario horarioOld = horarioRepository.findById(novoHorario.getId())
-				.orElseThrow(() -> new ResourceNotFoundException("Horario", "Id", novoHorario.getId().toString()));
-		if(grupoHorario.getId() != novoHorario.getGrupoHorario().getId()) {
+	public ResponseEntity<Horario> editarHorario(Horario novoHorario, Integer idUsuario, Integer id) throws ResourceNotFoundException {
+		Horario oldHorario = horarioRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Horario", "Id", id.toString()));
+		GrupoHorario grupoHorario = grupoHorarioRepository.findById(oldHorario.getGrupoHorario().getId())
+				.orElseThrow(() -> new ResourceNotFoundException("GrupoHorario", "Id", oldHorario.getGrupoHorario().getId().toString()));
+		if(grupoHorario.getUsuario().getId() != idUsuario) {
 			throw new PermissionDeniedException();
 		} else {
-			horarioOld.setNome(novoHorario.getNome() != null ? novoHorario.getNome() : horarioOld.getNome());
-			horarioOld.setHora(novoHorario.getHora() != null ? novoHorario.getHora() : horarioOld.getHora());
-			horarioRepository.save(horarioOld);
-			return ResponseEntity.status(HttpStatus.OK).body(horarioOld);
+			oldHorario.setNome(novoHorario.getNome() != null ? novoHorario.getNome() : oldHorario.getNome());
+			oldHorario.setHora(novoHorario.getHora() != null ? novoHorario.getHora() : oldHorario.getHora());
+			horarioRepository.save(oldHorario);
+			return ResponseEntity.status(HttpStatus.OK).body(oldHorario);
 		}
 	}
 }
