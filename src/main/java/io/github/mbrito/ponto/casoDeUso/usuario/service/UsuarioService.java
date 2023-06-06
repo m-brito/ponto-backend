@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.github.mbrito.ponto.casoDeUso.grupoHorario.service.GrupoHorarioService;
 import io.github.mbrito.ponto.casoDeUso.usuario.dto.TokenDTO;
 import io.github.mbrito.ponto.casoDeUso.usuario.dto.UsuarioDTO;
 import io.github.mbrito.ponto.casoDeUso.usuario.entitie.Usuario;
@@ -48,6 +49,9 @@ public class UsuarioService implements UserDetailsService{
 
     @Autowired
     private UsuarioRepository repository;
+    
+    @Autowired
+    private GrupoHorarioService grupoHorarioService;
     
     @Autowired
     private FirebaseService firebaseService;
@@ -136,11 +140,13 @@ public class UsuarioService implements UserDetailsService{
 	    }
     }
     
-    public ResponseEntity<UsuarioDTO> editarUsuarioParcial(Usuario novoUsuario, Integer idUsuario) throws ResourceNotFoundException {
+    public ResponseEntity<UsuarioDTO> editarUsuarioParcial(Usuario novoUsuario, Integer idGrupoHorario, Integer idUsuario) throws ResourceNotFoundException {
 		ResponseEntity<Usuario> oldUsuario = obterUsuarioId(idUsuario);
 		Usuario u = oldUsuario.getBody();
-		u.setNome(novoUsuario.getNome() != null ? novoUsuario.getNome() : u.getNome());
-		u.setGrupoHorario(novoUsuario.getGrupoHorario() != null ? novoUsuario.getGrupoHorario() : u.getGrupoHorario());
+		if(novoUsuario != null) {
+			u.setNome(novoUsuario.getNome() != null ? novoUsuario.getNome() : u.getNome());			
+		}
+		u.setGrupoHorario(idGrupoHorario != null ? grupoHorarioService.buscarGrupoHorarioId(idGrupoHorario, idUsuario).getBody() : u.getGrupoHorario());
 		repository.save(u);
 		UsuarioDTO usuarioDTO = new UsuarioDTO(u.getId(), u.getNome(), u.getEmail(), u.getTipo(), u.getFoto(), u.getGrupoHorario());
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();

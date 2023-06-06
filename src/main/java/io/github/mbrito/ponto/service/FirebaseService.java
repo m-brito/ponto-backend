@@ -44,7 +44,7 @@ public class FirebaseService {
 		FirebaseOptions options = FirebaseOptions.builder()
 				.setProjectId(firebaseProjectId)
 				.setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//				.setDatabaseUrl("https://loja-springboot.firebaseio.com")
+//				.setDatabaseUrl("https://ponto-springboot.firebaseio.com")
 				.setStorageBucket(firebaseBucket).build();
 		return FirebaseApp.initializeApp(options);
 	}

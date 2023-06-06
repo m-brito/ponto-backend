@@ -25,6 +25,7 @@ import org.springframework.web.server.ResponseStatusException;
 import io.github.mbrito.ponto.casoDeUso.usuario.dto.CredenciaisDTO;
 import io.github.mbrito.ponto.casoDeUso.usuario.dto.TokenDTO;
 import io.github.mbrito.ponto.casoDeUso.usuario.dto.UsuarioDTO;
+import io.github.mbrito.ponto.casoDeUso.usuario.dto.UsuarioEditarDTO;
 import io.github.mbrito.ponto.casoDeUso.usuario.entitie.Usuario;
 import io.github.mbrito.ponto.casoDeUso.usuario.service.UsuarioService;
 import io.github.mbrito.ponto.exceptions.ResourceNotFoundException;
@@ -49,14 +50,14 @@ public class UsuarioController {
     }
     
     @PatchMapping()
-	public ResponseEntity<UsuarioDTO> editarUsuario(@RequestBody Usuario usuario) throws ResourceNotFoundException {
+	public ResponseEntity<UsuarioDTO> editarUsuario(@RequestBody UsuarioEditarDTO dto) throws ResourceNotFoundException {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
-		return usuarioService.editarUsuarioParcial(usuario, userId.intValue());
+		return usuarioService.editarUsuarioParcial(dto.getUsuario(), dto.getIdGrupoHorario(), userId.intValue());
 	}
     
     @PutMapping("/foto")
-    public ResponseEntity<UsuarioDTO> editarFoto(MultipartFile fotoUsuario, String teste) throws ResourceNotFoundException{
+    public ResponseEntity<UsuarioDTO> editarFoto(MultipartFile fotoUsuario) throws ResourceNotFoundException{
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
         return usuarioService.editarFoto(fotoUsuario, userId.intValue());
