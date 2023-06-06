@@ -50,7 +50,7 @@ public class UsuarioController {
     }
     
     @PatchMapping()
-	public ResponseEntity<UsuarioDTO> editarUsuario(@RequestBody UsuarioEditarDTO dto) throws ResourceNotFoundException {
+	public ResponseEntity<UsuarioDTO> editarUsuario(@RequestBody UsuarioEditarDTO dto) throws Exception {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Long userId = (Long) authentication.getPrincipal();
 		return usuarioService.editarUsuarioParcial(dto.getUsuario(), dto.getIdGrupoHorario(), userId.intValue());

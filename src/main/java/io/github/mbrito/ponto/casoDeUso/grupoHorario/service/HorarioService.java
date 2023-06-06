@@ -26,7 +26,6 @@ public class HorarioService {
 	GrupoHorarioRepository grupoHorarioRepository;
 	
 	public ResponseEntity<Horario> salvar(Horario horario, Integer idUsuario, Integer idGrupoHorario) throws ResourceNotFoundException {
-		System.out.println(idGrupoHorario);
 		GrupoHorario grupoHorario = grupoHorarioRepository.findById(idGrupoHorario)
 				.orElseThrow(() -> new ResourceNotFoundException("GrupoHorario", "Id", horario.getGrupoHorario().getId().toString()));
 		horario.setGrupoHorario(grupoHorario);

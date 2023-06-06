@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.mbrito.ponto.casoDeUso.grupoHorario.dto.GrupoHorarioDTO;
 import io.github.mbrito.ponto.casoDeUso.grupoHorario.entities.GrupoHorario;
 import io.github.mbrito.ponto.casoDeUso.grupoHorario.service.GrupoHorarioService;
+import io.github.mbrito.ponto.casoDeUso.usuario.service.UsuarioService;
 import io.github.mbrito.ponto.exceptions.ResourceNotFoundException;
 
 @RestController
@@ -37,7 +38,7 @@ public class GrupoHorarioController {
 	}
 	
 	@DeleteMapping("/{id}")
-	ResponseEntity<GrupoHorario> deletarGrupo(@PathVariable Integer id) throws ResourceNotFoundException {
+	ResponseEntity<GrupoHorario> deletarGrupo(@PathVariable Integer id) throws Exception {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Long userId = (Long) authentication.getPrincipal();
 		return grupoHorarioService.deletar(id, userId.intValue());

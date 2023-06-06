@@ -20,6 +20,7 @@ import io.github.mbrito.ponto.casoDeUso.grupoHorario.repository.GrupoHorarioRepo
 import io.github.mbrito.ponto.casoDeUso.grupoHorario.repository.HorarioRepository;
 import io.github.mbrito.ponto.casoDeUso.usuario.entitie.Usuario;
 import io.github.mbrito.ponto.casoDeUso.usuario.repository.UsuarioRepository;
+import io.github.mbrito.ponto.casoDeUso.usuario.service.UsuarioService;
 import io.github.mbrito.ponto.exceptions.PermissionDeniedException;
 import io.github.mbrito.ponto.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
@@ -59,6 +60,10 @@ public class GrupoHorarioService {
 		if(grupoHorario.getUsuario().getId() != idUsuario) {
 			throw new PermissionDeniedException();
 		} else {
+			Usuario usuario= usuarioRepository.findById(idUsuario)
+					.orElseThrow(() -> new ResourceNotFoundException("Usuario", "Id", idUsuario.toString()));
+			usuario.setGrupoHorario(null);
+			usuarioRepository.save(usuario);
 			horarioRepository.deleteAll(grupoHorario.getHorarios());
 			grupoHorarioRepository.delete(grupoHorario);
 			return ResponseEntity.status(HttpStatus.OK).body(null);			

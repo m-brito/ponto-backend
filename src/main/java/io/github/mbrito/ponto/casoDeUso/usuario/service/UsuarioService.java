@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.github.mbrito.ponto.casoDeUso.grupoHorario.entities.GrupoHorario;
 import io.github.mbrito.ponto.casoDeUso.grupoHorario.service.GrupoHorarioService;
 import io.github.mbrito.ponto.casoDeUso.usuario.dto.TokenDTO;
 import io.github.mbrito.ponto.casoDeUso.usuario.dto.UsuarioDTO;
@@ -140,17 +141,23 @@ public class UsuarioService implements UserDetailsService{
 	    }
     }
     
-    public ResponseEntity<UsuarioDTO> editarUsuarioParcial(Usuario novoUsuario, Integer idGrupoHorario, Integer idUsuario) throws ResourceNotFoundException {
+    @Transactional
+    public ResponseEntity<UsuarioDTO> editarUsuarioParcial(Usuario novoUsuario, Integer idGrupoHorario, Integer idUsuario) throws Exception {
 		ResponseEntity<Usuario> oldUsuario = obterUsuarioId(idUsuario);
 		Usuario u = oldUsuario.getBody();
 		if(novoUsuario != null) {
 			u.setNome(novoUsuario.getNome() != null ? novoUsuario.getNome() : u.getNome());			
 		}
-		u.setGrupoHorario(idGrupoHorario != null ? grupoHorarioService.buscarGrupoHorarioId(idGrupoHorario, idUsuario).getBody() : u.getGrupoHorario());
-		repository.save(u);
-		UsuarioDTO usuarioDTO = new UsuarioDTO(u.getId(), u.getNome(), u.getEmail(), u.getTipo(), u.getFoto(), u.getGrupoHorario());
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-		return ResponseEntity.status(HttpStatus.OK).location(uri).body(usuarioDTO);
+		GrupoHorario grupoHorario = grupoHorarioService.buscarGrupoHorarioId(idGrupoHorario, idUsuario).getBody();
+		if(grupoHorario.getHorarios().size() < 2) {
+			throw new Exception("Grupo Horario não tem horarios suficiente!");
+		} else {
+			u.setGrupoHorario(grupoHorario);
+			repository.save(u);
+			UsuarioDTO usuarioDTO = new UsuarioDTO(u.getId(), u.getNome(), u.getEmail(), u.getTipo(), u.getFoto(), u.getGrupoHorario());
+			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+			return ResponseEntity.status(HttpStatus.OK).location(uri).body(usuarioDTO);
+		}
 	}
     
     public ResponseEntity<Usuario> obterUsuarioId(Integer id) throws ResourceNotFoundException {
