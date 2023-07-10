@@ -1,5 +1,6 @@
 package io.github.mbrito.ponto.casoDeUso.usuario.entitie;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.hibernate.validator.constraints.UniqueElements;
@@ -41,6 +42,12 @@ public class Usuario {
 	
 	private String tipo;
 	
+	private Integer diaFechamentoPonto;
+	
+	private LocalDate ultimaDataAprovada;
+	
+	private LocalDate dataCriacao;
+	
 	private String foto;
 	
 	@OneToMany(mappedBy = "usuario")
@@ -52,13 +59,16 @@ public class Usuario {
 	@OneToMany(mappedBy = "usuario")
 	private List<Ponto> pontos;
 
-	public Usuario(int id, String nome, String email, String senha, String foto) {
+	public Usuario(int id, String nome, String email, String senha, String foto, Integer diaFechamentoPonto, LocalDate ultimaDataAprovada, LocalDate dataCriacao) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.senha = senha;
 		this.foto = foto;
+		this.diaFechamentoPonto = diaFechamentoPonto;
+		this.ultimaDataAprovada = ultimaDataAprovada;
+		this.dataCriacao = dataCriacao;
 	}
 	
 	public Usuario(String nome, String email, String senha) {
@@ -123,6 +133,30 @@ public class Usuario {
 
 	public void setFoto(String foto) {
 		this.foto = foto;
+	}
+
+	public Integer getDiaFechamentoPonto() {
+		return diaFechamentoPonto;
+	}
+
+	public void setDiaFechamentoPonto(Integer diaFechamentoPonto) {
+		this.diaFechamentoPonto = diaFechamentoPonto;
+	}
+
+	public LocalDate getUltimaDataAprovada() {
+		return ultimaDataAprovada;
+	}
+
+	public void setUltimaDataAprovada(LocalDate ultimaDataAprovada) {
+		this.ultimaDataAprovada = ultimaDataAprovada;
+	}
+	
+	public LocalDate getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(LocalDate dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 
 	public List<GrupoHorario> getGruposHorarios() {

@@ -62,7 +62,9 @@ public class GrupoHorarioService {
 		} else {
 			Usuario usuario= usuarioRepository.findById(idUsuario)
 					.orElseThrow(() -> new ResourceNotFoundException("Usuario", "Id", idUsuario.toString()));
-			usuario.setGrupoHorario(null);
+			if(usuario.getGrupoHorario().getId().equals(grupoHorario.getId())) {				
+				usuario.setGrupoHorario(null);
+			}
 			usuarioRepository.save(usuario);
 			horarioRepository.deleteAll(grupoHorario.getHorarios());
 			grupoHorarioRepository.delete(grupoHorario);

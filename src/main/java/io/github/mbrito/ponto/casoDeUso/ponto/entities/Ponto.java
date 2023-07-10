@@ -6,8 +6,10 @@ import java.time.LocalTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import io.github.mbrito.ponto.casoDeUso.grupoHorario.entities.GrupoHorario;
+import io.github.mbrito.ponto.casoDeUso.grupoHorario.entities.Horario;
 import io.github.mbrito.ponto.casoDeUso.usuario.entitie.Usuario;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 
 @Entity
+@JsonIgnoreProperties({"usuario"})
 public class Ponto {
 	
 	@Id
@@ -31,20 +34,28 @@ public class Ponto {
 	@ManyToOne
 	private Usuario usuario;
 	
-	@ManyToOne
-	private GrupoHorario grupoHorario;
+	@JsonFormat(pattern = "HH:mm:ss")
+	private LocalTime horaTemplate;
 
 	public Ponto() {
 		
 	}
 	
-	public Ponto(int id, LocalTime hora, LocalDate data, Usuario usuario, GrupoHorario grupoHorario) {
+	public Ponto(int id, LocalTime hora, LocalDate data, Usuario usuario, LocalTime horaTemplate) {
 		super();
 		this.id = id;
 		this.hora = hora;
 		this.data = data;
 		this.usuario = usuario;
-		this.grupoHorario = grupoHorario;
+		this.horaTemplate = horaTemplate;
+	}
+	
+	public Ponto(LocalTime hora, LocalDate data, Usuario usuario, LocalTime horaTemplate) {
+		super();
+		this.hora = hora;
+		this.data = data;
+		this.usuario = usuario;
+		this.horaTemplate = horaTemplate;
 	}
 
 	public int getId() {
@@ -79,18 +90,18 @@ public class Ponto {
 		this.usuario = usuario;
 	}
 
-	public GrupoHorario getGrupoHorario() {
-		return grupoHorario;
+	public LocalTime getHoraTemplate() {
+		return horaTemplate;
 	}
 
-	public void setGrupoHorario(GrupoHorario grupoHorario) {
-		this.grupoHorario = grupoHorario;
+	public void setHoraTemplate(LocalTime horaTemplate) {
+		this.horaTemplate = horaTemplate;
 	}
 
 	@Override
 	public String toString() {
-		return "Ponto [id=" + id + ", hora=" + hora + ", data=" + data + ", usuario=" + usuario + ", grupoHorario="
-				+ grupoHorario + "]";
+		return "Ponto [id=" + id + ", hora=" + hora + ", data=" + data + ", usuario=" + usuario + ", horaTemplate="
+				+ horaTemplate + "]";
 	}
 	
 }

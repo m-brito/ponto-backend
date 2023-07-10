@@ -31,9 +31,6 @@ public class GrupoHorario {
 	@OneToMany(mappedBy = "grupoHorario")
 	private List<Horario> horarios;
 	
-	@OneToMany(mappedBy = "grupoHorario")
-	private List<Ponto> pontos;
-	
 	public GrupoHorario(Integer id, Usuario usuario, String nome) {
 		super();
 		this.id = id;

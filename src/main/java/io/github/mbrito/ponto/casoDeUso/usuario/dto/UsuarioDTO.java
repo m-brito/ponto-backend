@@ -1,5 +1,7 @@
 package io.github.mbrito.ponto.casoDeUso.usuario.dto;
 
+import java.time.LocalDate;
+
 import io.github.mbrito.ponto.casoDeUso.grupoHorario.entities.GrupoHorario;
 
 public class UsuarioDTO {
@@ -8,15 +10,21 @@ public class UsuarioDTO {
     private String email;
     private String tipo;
     private String foto;
+    private Integer diaFechamentoPonto;
+    private LocalDate ultimaDataAprovada;
+    private LocalDate dataCriacao;
     private GrupoHorario grupoHorario;
     
-	public UsuarioDTO(Integer id, String nome, String email, String tipo, String foto, GrupoHorario grupoHorario) {
+	public UsuarioDTO(Integer id, String nome, String email, String tipo, String foto, GrupoHorario grupoHorario, Integer diaFechamentoPonto, LocalDate ultimaDataAprovada, LocalDate dataCriacao) {
 		super();
 		this.id = id;
 		this.nome = nome;
 		this.email = email;
 		this.tipo = tipo;
 		this.foto = foto;
+		this.diaFechamentoPonto = diaFechamentoPonto;
+		this.ultimaDataAprovada = ultimaDataAprovada;
+		this.dataCriacao = dataCriacao;
 		this.grupoHorario = grupoHorario;
 	}
 
@@ -60,6 +68,30 @@ public class UsuarioDTO {
 		this.foto = foto;
 	}
 	
+	public Integer getDiaFechamentoPonto() {
+		return diaFechamentoPonto;
+	}
+
+	public void setDiaFechamentoPonto(Integer diaFechamentoPonto) {
+		this.diaFechamentoPonto = diaFechamentoPonto;
+	}
+
+	public LocalDate getUltimaDataAprovada() {
+		return ultimaDataAprovada;
+	}
+
+	public void setUltimaDataAprovada(LocalDate ultimaDataAprovada) {
+		this.ultimaDataAprovada = ultimaDataAprovada;
+	}
+
+	public LocalDate getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(LocalDate dataCriacao) {
+		this.dataCriacao = dataCriacao;
+	}
+
 	public GrupoHorario getGrupoHorario() {
 		return grupoHorario;
 	}

@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -92,6 +93,9 @@ public class UsuarioService implements UserDetailsService{
     				}
     			}
     			usuario.setFoto(foto);
+    			usuario.setDiaFechamentoPonto(15);
+    			usuario.setUltimaDataAprovada(LocalDate.now());
+    			usuario.setDataCriacao(LocalDate.now());
     			Usuario usuarioSalvo = repository.save(usuario);
     			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/" + usuarioSalvo.getId()).build().toUri();
     			return usuarioSalvo;	
@@ -130,7 +134,7 @@ public class UsuarioService implements UserDetailsService{
 					}
 					u.setFoto(foto);
 					Usuario usuarioSalvo = repository.save(u);
-					UsuarioDTO usuarioDTO = new UsuarioDTO(u.getId(), u.getNome(), u.getEmail(), u.getTipo(), u.getFoto(), u.getGrupoHorario());
+					UsuarioDTO usuarioDTO = new UsuarioDTO(u.getId(), u.getNome(), u.getEmail(), u.getTipo(), u.getFoto(), u.getGrupoHorario(), u.getDiaFechamentoPonto(), u.getUltimaDataAprovada(), u.getDataCriacao());
 					URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/" + usuarioSalvo.getId()).build().toUri();
 					return ResponseEntity.status(HttpStatus.OK).location(uri).body(usuarioDTO);
 				}
@@ -147,17 +151,21 @@ public class UsuarioService implements UserDetailsService{
 		Usuario u = oldUsuario.getBody();
 		if(novoUsuario != null) {
 			u.setNome(novoUsuario.getNome() != null ? novoUsuario.getNome() : u.getNome());			
+			u.setDiaFechamentoPonto(novoUsuario.getDiaFechamentoPonto() != null ? novoUsuario.getDiaFechamentoPonto() : u.getDiaFechamentoPonto());			
+			u.setUltimaDataAprovada(novoUsuario.getUltimaDataAprovada() != null ? novoUsuario.getUltimaDataAprovada() : u.getUltimaDataAprovada());			
 		}
-		GrupoHorario grupoHorario = grupoHorarioService.buscarGrupoHorarioId(idGrupoHorario, idUsuario).getBody();
-		if(grupoHorario.getHorarios().size() < 2) {
-			throw new Exception("Grupo Horario não tem horarios suficiente!");
-		} else {
-			u.setGrupoHorario(grupoHorario);
-			repository.save(u);
-			UsuarioDTO usuarioDTO = new UsuarioDTO(u.getId(), u.getNome(), u.getEmail(), u.getTipo(), u.getFoto(), u.getGrupoHorario());
-			URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-			return ResponseEntity.status(HttpStatus.OK).location(uri).body(usuarioDTO);
+		if(idGrupoHorario != null) {
+			GrupoHorario grupoHorario = grupoHorarioService.buscarGrupoHorarioId(idGrupoHorario, idUsuario).getBody();
+			if(grupoHorario.getHorarios().size() < 2) {
+				throw new Exception("Grupo Horario não tem horarios suficiente!");
+			} else {
+				u.setGrupoHorario(grupoHorario);
+			}			
 		}
+		repository.save(u);
+		UsuarioDTO usuarioDTO = new UsuarioDTO(u.getId(), u.getNome(), u.getEmail(), u.getTipo(), u.getFoto(), u.getGrupoHorario(), u.getDiaFechamentoPonto(), u.getUltimaDataAprovada(), u.getDataCriacao());
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+		return ResponseEntity.status(HttpStatus.OK).location(uri).body(usuarioDTO);
 	}
     
     public ResponseEntity<Usuario> obterUsuarioId(Integer id) throws ResourceNotFoundException {
@@ -172,7 +180,7 @@ public class UsuarioService implements UserDetailsService{
     public ResponseEntity<UsuarioDTO> obterPerfilId(Integer id) throws ResourceNotFoundException {
     	Optional<Usuario> usuarios= repository.findById(id); 
     	if(usuarios.isPresent()) {
-    		UsuarioDTO usuarioDTO = new UsuarioDTO(usuarios.get().getId(), usuarios.get().getNome(), usuarios.get().getEmail(), usuarios.get().getTipo(), usuarios.get().getFoto(), usuarios.get().getGrupoHorario());
+    		UsuarioDTO usuarioDTO = new UsuarioDTO(usuarios.get().getId(), usuarios.get().getNome(), usuarios.get().getEmail(), usuarios.get().getTipo(), usuarios.get().getFoto(), usuarios.get().getGrupoHorario(), usuarios.get().getDiaFechamentoPonto(), usuarios.get().getUltimaDataAprovada(), usuarios.get().getDataCriacao());
     		return ResponseEntity.status(HttpStatus.OK).body(usuarioDTO);
     	} else {
     		throw new ResourceNotFoundException("Usuarios", "Id", id.toString());
