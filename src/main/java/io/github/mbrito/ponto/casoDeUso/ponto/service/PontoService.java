@@ -107,9 +107,14 @@ public class PontoService {
 				.orElseThrow(() -> new ResourceNotFoundException("Usuario", "Id", idUsuarioConsulta.toString()));
 		if(usuario.getTipo().equals("USER") && idUsuario != idUsuarioConsulta) {
 			throw new PermissionDeniedException();
-		} else {
+		} else if(usuario.getTipo().equals("GESTOR") || usuario.getTipo().equals("RH")) {
+			List<Ponto> pontos = pontoRepository.findByUsuarioAndDataBetweenOrderByDataAprovada(usuarioConsulta, dataInicial, dataFinal);
+			return ResponseEntity.status(HttpStatus.OK).body(pontos);
+		} else if((usuario.getTipo().equals("USER") && idUsuario == idUsuarioConsulta) || usuario.getTipo().equals("ADM")) {
 			List<Ponto> pontos = pontoRepository.findByUsuarioAndDataBetweenOrderByData(usuarioConsulta, dataInicial, dataFinal);
 			return ResponseEntity.status(HttpStatus.OK).body(pontos);			
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(null);
 		}
 	}
 }
