@@ -82,10 +82,18 @@ public class UsuarioController {
     
     @GetMapping("/perfis")
     public ResponseEntity<Page<UsuarioDTO>> buscarPerfis(@RequestParam(name = "pagina", defaultValue = "0") int pagina,
-			@RequestParam(name = "maxPage", defaultValue = "25") int maxPage) throws ResourceNotFoundException {
+			@RequestParam(name = "maxPage", defaultValue = "50") int maxPage) throws ResourceNotFoundException {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	Long userId = (Long) authentication.getPrincipal();
     	return usuarioService.obterPerfis(userId.intValue(), pagina, maxPage);
+    }
+    
+    @GetMapping("/perfis/{pesquisa}")
+    public ResponseEntity<Page<UsuarioDTO>> buscarPerfisPesquisa(@PathVariable String pesquisa, @RequestParam(name = "pagina", defaultValue = "0") int pagina,
+    		@RequestParam(name = "maxPage", defaultValue = "50") int maxPage) throws ResourceNotFoundException {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	Long userId = (Long) authentication.getPrincipal();
+    	return usuarioService.obterPerfisPesquisa(userId.intValue(), pesquisa, pagina, maxPage);
     }
 
     @PostMapping("/auth")

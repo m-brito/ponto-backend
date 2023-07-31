@@ -195,12 +195,12 @@ public class UsuarioService implements UserDetailsService{
     
     public ResponseEntity<Page<UsuarioDTO>> obterPerfis(Integer id, int pagina, int maxPage) throws ResourceNotFoundException {
         Optional<Usuario> usuarioRequisicao = repository.findById(id);
-        List<String> permissoes = new ArrayList<>(List.of("GESTOR", "RH", "ADM"));
+        List<String> permissoes = new ArrayList<>(List.of("GERENTE", "RH", "ADM"));
         
         if (usuarioRequisicao.isPresent()) {
             if (permissoes.contains(usuarioRequisicao.get().getTipo())) {
-                if (maxPage > 25) {
-                    maxPage = 25;
+                if (maxPage > 50) {
+                    maxPage = 50;
                 }
                 
                 Page<Usuario> page = repository.obterTodosUsuariosPageable(PageRequest.of(pagina, maxPage));
@@ -223,6 +223,38 @@ public class UsuarioService implements UserDetailsService{
         } else {
             throw new ResourceNotFoundException("Usuarios", "Id", id.toString());
         }
+    }
+    
+    public ResponseEntity<Page<UsuarioDTO>> obterPerfisPesquisa(Integer id, String pesquisa, int pagina, int maxPage) throws ResourceNotFoundException {
+    	Optional<Usuario> usuarioRequisicao = repository.findById(id);
+    	List<String> permissoes = new ArrayList<>(List.of("GERENTE", "RH", "ADM"));
+    	
+    	if (usuarioRequisicao.isPresent()) {
+    		if (permissoes.contains(usuarioRequisicao.get().getTipo())) {
+    			if (maxPage > 50) {
+    				maxPage = 50;
+    			}
+    			
+    			Page<Usuario> page = repository.obterTodosUsuariosNomePageable(pesquisa, PageRequest.of(pagina, maxPage));
+    			Page<UsuarioDTO> usuariosDTO = page.map(usuario -> new UsuarioDTO(
+    					usuario.getId(),
+    					usuario.getNome(),
+    					usuario.getEmail(),
+    					usuario.getTipo(),
+    					usuario.getFoto(),
+    					usuario.getGrupoHorario(),
+    					usuario.getDiaFechamentoPonto(),
+    					usuario.getUltimaDataAprovada(),
+    					usuario.getDataCriacao()
+    					));
+    			
+    			return ResponseEntity.status(HttpStatus.OK).body(usuariosDTO);
+    		} else {
+    			throw new PermissionDeniedException();
+    		}
+    	} else {
+    		throw new ResourceNotFoundException("Usuarios", "Id", id.toString());
+    	}
     }
     
     public ResponseEntity<Usuario> obterUsuarioEmail(String email) throws ResourceNotFoundException {
@@ -261,8 +293,8 @@ public class UsuarioService implements UserDetailsService{
         Usuario usuario = repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
 
-        String[] roles = usuario.getTipo() == "GESTOR" ?
-                new String[]{"GESTOR", "USER"} : new String[]{"USER"};
+        String[] roles = usuario.getTipo() == "GERENTE" ?
+                new String[]{"GERENTE", "USER"} : new String[]{"USER"};
 
         return User
                 .builder()

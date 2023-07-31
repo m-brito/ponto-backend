@@ -15,4 +15,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
 	
 	@Query("SELECT usuario FROM Usuario usuario WHERE usuario.tipo = 'USER'")
 	public Page<Usuario> obterTodosUsuariosPageable(Pageable pageble);
+	
+	@Query("SELECT usuario FROM Usuario usuario WHERE usuario.tipo = 'USER' AND usuario.nome LIKE %:pesquisa%")
+	public Page<Usuario> obterTodosUsuariosNomePageable(String pesquisa, Pageable pageble);
 }
